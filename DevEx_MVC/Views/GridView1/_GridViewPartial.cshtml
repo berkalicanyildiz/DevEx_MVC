@@ -1,0 +1,142 @@
+@model List<DevEx_MVC.Models.Categories>
+@{
+    var grid = Html.DevExpress().GridView(settings =>
+    {
+        settings.Name = "GridView";
+        settings.CallbackRouteValues = new { Controller = "GridView1", Action = "GridViewPartial" };
+
+        settings.SettingsEditing.AddNewRowRouteValues = new { Controller = "GridView1", Action = "GridViewPartialAddNew" };
+        settings.SettingsEditing.UpdateRowRouteValues = new { Controller = "GridView1", Action = "GridViewPartialUpdate" };
+        settings.SettingsEditing.DeleteRowRouteValues = new { Controller = "GridView1", Action = "GridViewPartialDelete" };
+        settings.SettingsEditing.Mode = GridViewEditingMode.EditFormAndDisplayRow;
+        settings.SettingsBehavior.ConfirmDelete = true;
+
+        settings.CommandColumn.Visible = true;
+
+        settings.CommandColumn.ShowNewButtonInHeader = true;
+        settings.CommandColumn.ShowDeleteButton = true;
+        settings.CommandColumn.ShowEditButton = true;
+
+        settings.KeyFieldName = "CategoryID";
+
+        settings.SettingsPager.Visible = true;
+        settings.Settings.ShowGroupPanel = true;
+        settings.Settings.ShowHeaderFilterButton = true;
+
+        settings.SettingsBehavior.AllowSelectByRowClick = true;
+
+        settings.SettingsAdaptivity.AdaptivityMode = GridViewAdaptivityMode.HideDataCellsWindowLimit;
+        settings.SettingsAdaptivity.AdaptiveColumnPosition = GridViewAdaptiveColumnPosition.Right;
+        settings.SettingsAdaptivity.AdaptiveDetailColumnCount = 1;
+        settings.SettingsAdaptivity.AllowOnlyOneAdaptiveDetailExpanded = false;
+        settings.SettingsAdaptivity.HideDataCellsAtWindowInnerWidth = 0;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        //100 de 100
+        settings.Width = System.Web.UI.WebControls.Unit.Percentage(100);
+
+        settings.Columns.Add("CategoryID");
+
+        //excel export
+        settings.SettingsExport.EnableClientSideExportAPI = true;
+        settings.SettingsExport.ExcelExportMode = DevExpress.Export.ExportType.DataAware;
+        settings.Toolbars.Add(t =>
+        {
+            t.SettingsAdaptivity.Enabled = true;
+            t.SettingsAdaptivity.EnableCollapseRootItemsToIcons = true;
+            t.Items.Add(GridViewToolbarCommand.ExportToPdf);
+            t.Items.Add(GridViewToolbarCommand.ExportToXls);
+            t.Items.Add(GridViewToolbarCommand.ExportToXlsx);
+            t.Items.Add(GridViewToolbarCommand.ExportToDocx);
+            t.Items.Add(GridViewToolbarCommand.ExportToRtf);
+            t.Items.Add(GridViewToolbarCommand.ExportToCsv);
+        });
+
+
+
+        //band
+
+        settings.Columns.AddBand(band =>
+        {
+            band.Caption = "Band";
+            band.AllowDragDrop = DefaultBoolean.True;
+            band.Columns.Add("CategoryName");
+            band.Columns.Add("Description");
+
+        });
+
+
+
+        //category ve desc birleþtirme
+
+        settings.Columns.Add(colum =>
+        {
+            colum.Caption = "Toplam";
+            colum.SetDataItemTemplateContent(con =>
+            {
+
+
+                ViewContext.Writer.Write(DataBinder.Eval(con.DataItem, "CategoryName"));
+                ViewContext.Writer.Write("<br>"+DataBinder.Eval(con.DataItem, "Description"));
+            });
+        });
+
+        settings.Columns.Add(x =>
+        {
+            x.FieldName = "Products";
+
+
+            x.SetEditItemTemplateContent(o =>
+            {
+
+            });
+
+
+
+            x.SetDataItemTemplateContent(item =>
+            {
+
+
+
+                //ViewContext.Writer.Write("test");
+
+
+
+                var products = (List<DevEx_MVC.Models.Products>)ViewBag.products;
+                var ilgili = products.Where(a => a.CategoryID == (int)item.KeyValue).Select(y => y.ProductName);
+
+
+                @Html.DevExpress().RadioButtonList(radioset =>
+                {
+                    radioset.Name = "radio" + item.KeyValue;
+                    radioset.Properties.Items.AddRange(ilgili.ToList());
+                }).GetHtml();
+
+
+                foreach (var item2 in ilgili)
+                {
+                    ViewContext.Writer.Write(item2 + "<br>");
+
+                }
+
+            });
+        });
+    });
+    if (ViewData["EditError"] != null)
+    {
+        grid.SetEditErrorText((string)ViewData["EditError"]);
+    }
+}
+@grid.Bind(Model).GetHtml()

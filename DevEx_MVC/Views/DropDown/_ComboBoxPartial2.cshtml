@@ -1,0 +1,15 @@
+﻿@Html.DevExpress().ComboBox(settings =>
+{
+    settings.Name = "ComboBox2";
+    settings.Properties.IncrementalFilteringMode = IncrementalFilteringMode.StartsWith;
+    settings.Properties.DropDownStyle = DropDownStyle.DropDown;
+    settings.CallbackRouteValues = new { Controller = "DropDown", Action = "ComboBoxPartial2" };
+    settings.Properties.CallbackPageSize = 7;
+    settings.Properties.ValueField = "OrderID";
+    settings.Properties.TextField = "Quantity";
+    settings.Properties.IncrementalFilteringMode = IncrementalFilteringMode.Contains;
+}).BindToEF(string.Empty, string.Empty, (s, e) =>
+{
+    e.QueryableSource = DevEx_MVC.Controllers.DropDownController.Emails;
+    e.KeyExpression = "OrderID";
+}).GetHtml()

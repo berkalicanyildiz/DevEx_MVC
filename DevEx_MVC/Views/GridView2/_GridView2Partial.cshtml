@@ -1,0 +1,62 @@
+@using DevEx_MVC.Models;
+
+
+@{ 
+    var db = new NorthwindEntities();
+
+    IQueryable<Orders> eq = db.Orders.AsQueryable();
+}
+
+@{
+    var grid = Html.DevExpress().GridView(settings =>
+    {
+        settings.Name = "GridView2";
+        settings.CallbackRouteValues = new { Controller = "GridView2", Action = "GridView2Partial" };
+
+        settings.SettingsEditing.AddNewRowRouteValues = new { Controller = "GridView2", Action = "GridView2PartialAddNew" };
+        settings.SettingsEditing.UpdateRowRouteValues = new { Controller = "GridView2", Action = "GridView2PartialUpdate" };
+        settings.SettingsEditing.DeleteRowRouteValues = new { Controller = "GridView2", Action = "GridView2PartialDelete" };
+        settings.SettingsEditing.Mode = GridViewEditingMode.EditFormAndDisplayRow;
+        settings.SettingsBehavior.ConfirmDelete = true;
+
+        settings.CommandColumn.Visible = true;
+        settings.CommandColumn.ShowNewButton = true;
+        settings.CommandColumn.ShowDeleteButton = true;
+        settings.CommandColumn.ShowEditButton = true;
+
+        settings.KeyFieldName = "OrderID";
+
+        settings.Width = 1000;
+
+        settings.SettingsPager.Mode = GridViewPagerMode.EndlessPaging;
+        settings.SettingsPager.PageSize = 20;
+
+        settings.SettingsPager.Visible = true;
+        settings.Settings.ShowGroupPanel = false;
+        settings.Settings.ShowFilterRow = true;
+        settings.SettingsBehavior.AllowSelectByRowClick = false;
+
+
+
+        settings.Columns.Add("OrderID");
+        settings.Columns.Add("CustomerID");
+        settings.Columns.Add("EmployeeID");
+        settings.Columns.Add("OrderDate");
+        settings.Columns.Add("RequiredDate");
+        settings.Columns.Add("ShippedDate");
+        settings.Columns.Add("ShipVia");
+        settings.Columns.Add("ShipName");
+
+    });
+    if (ViewData["EditError"] != null)
+    {
+        grid.SetEditErrorText((string)ViewData["EditError"]);
+    }
+}
+@grid.BindToEF(string.Empty, string.Empty, (s, e) => {
+    e.QueryableSource = eq;
+    e.KeyExpression = "OrderID";
+}
+
+
+).GetHtml()

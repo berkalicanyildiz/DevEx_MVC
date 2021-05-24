@@ -1,0 +1,10 @@
+@Html.DevExpress().ComboBox(settings =>
+{
+    settings.Name = "ComboBox";
+    settings.Properties.DropDownStyle = DropDownStyle.DropDown;
+    settings.CallbackRouteValues = new { Controller = "DropDown", Action = "ComboBoxPartial" };
+    settings.Properties.CallbackPageSize = 7;
+    settings.Properties.ValueField = "OrderID";
+    settings.Properties.TextField = "Quantity";
+    settings.Properties.IncrementalFilteringMode = IncrementalFilteringMode.Contains;
+}).BindList(Model).GetHtml()
