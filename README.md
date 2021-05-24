@@ -1,4 +1,5 @@
 Asp.net MVC üzerine DevExpress MVC Extension çalışmalarım.
+Northwind kullanıldı. EF6 DB-First
 
 1. Gridview 
 
